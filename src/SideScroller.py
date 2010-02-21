@@ -4,6 +4,7 @@ import primitives
 import pymunk as pm
 from pymunk import Vec2d
 import math
+import re
 
 COLLTYPE_DEFAULT = 0
 COLLTYPE_MOUSE = 1
