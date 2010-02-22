@@ -4,14 +4,8 @@ Implementing 2D drawing primitives using
 pyglet.gl
 copyright 2007 by Flavio Codeco Coelho
 """
-from pyglet import font
-from pyglet import clock
 from pyglet import window
-from pyglet import image
 from pyglet.gl import *
-from pyglet.window import mouse
-from pyglet.window import event
-from pyglet.window import key
 
 class Base(object):
     """
@@ -105,7 +99,7 @@ class Circle(Base):
             inner = self.radius - self.stroke # outline width
             if inner < 0: inner=0
         else :
-             inner = 0 # filled
+            inner = 0 # filled
         
         gluQuadricDrawStyle(self.q, self.style)
 
@@ -233,24 +227,28 @@ class Polygon(Base):
         glPopMatrix()
 
 
-class LineRel(Base):
-    def __init__(self, x,y, a=(0,0), b=(0,0), z=0, color=(0,0,0,1), stroke=0, rotation=0.0, style=0):
+class Line(Base):
+    def __init__(self, a=(0,0), b=(0,0), z=0, color=(0,0,0,1), stroke=0, rotation=0.0, style=0):
         """ Draws a basic line given the begining and end point (tuples), color (tuple) and stroke
             (thickness of line)
             Line( x,y, a=(1,1), b=(100,100), z=0, color=(0.2,0,0,1), stroke=10, rotation=45)
         """
+        x,y = self.init(a, b)
+        self.style = style
+        Base.__init__(self, x, y, z,color,stroke,rotation)
+    
+    def init(self,a,b):
         w = (b[0] - a[0]) 
         h = (b[1] - a[1]) 
         x = abs(a[0] + w*0.5)
         y = abs(a[1] + h*0.5)
         self.a2 = abs(a[0]) - x, abs(a[1]) - y
         self.b2 = abs(b[0]) - x, abs(b[1]) - y
-        self.a = x - w*0.5, y - w*0.5
-        self.b = x + w*0.5, y + w*0.5
         self.rect = Rect(x, y, w, h)
-        self.style = style
-        Base.__init__(self, x, y, z,color,stroke,rotation)
-
+        self.x = x
+        self.y = y
+        return x,y
+    
     def render(self):
         """
         Draws Line
@@ -258,7 +256,6 @@ class LineRel(Base):
         p1 = self.a2
         p2 = self.b2
         glColor4f(*self.color)
-        color  = (GLfloat *4)(*self.color)
                
         glPushMatrix()
 
@@ -285,35 +282,15 @@ class LineRel(Base):
         
         glPopMatrix()
 
-
-    def updateAB(self):
-        self.a = self.x + self.a[0], self.y + self.a[0]
-        self.b = self.x + self.b[0], self.y + self.b[0]
-
     def setLoc(self, p):
-        self.rect.loc = p ; self.updateAB()
+        self.rect.loc = p ; #self.updateAB()
     def setX(self, x):
-        self.rect.x = x ; self.updateAB()
+        self.rect.x = x ; #self.updateAB()
     def setY(self, y):
-        self.rect.y = y; self.updateAB()
+        self.rect.y = y; #self.updateAB()
     x = property(Base.getX, setX)
     y = property(Base.getY, setY)
     loc = property(Base.getLoc, setLoc)
-
-
-class Line(LineRel):
-    def __init__(self, a=(0,0), b=(0,0), z=0, color=(0,0,0,1), stroke=0, rotation=0.0, style=0):
-        """ Draws a basic line given the begining and end point (tuples), color (tuple) and stroke
-            (thickness of line)
-            Line( a=(1,1), b=(100,100), z=20, color=(0.2,0,0,1), stroke=10, rotation=45)
-        """
-        w = (b[0] - a[0]) 
-        h = (b[1] - a[1]) 
-        x = abs(a[0] + w*0.5) # abs x,y
-        y = abs(a[1] + h*0.5)
-        a = x-w*0.5, y-h*0.5 # relative a,b
-        b = x+w*0.5, y+h*0.5
-        LineRel.__init__(self, x, y, a, b, z, color, stroke, rotation, style)
 
         
 
@@ -390,7 +367,7 @@ class Rect(object):
     def getRight(self): return self.rect[2]
     right = property(getRight, setRight)
     
-    def setBottom(self,x):
+    def setBottom(self,y):
         self.rect = self.x, y-self.width*0.5, self.width, self.height
     def getBottom(self): return self.rect[3]
     bottom = property(getBottom, setBottom)
