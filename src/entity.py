@@ -34,8 +34,8 @@ class Ball(SimpleEntity):
         SimpleEntity.__init__(self, shape, renderer)
         
 class Platform(SimpleEntity):
-    def __init__(self, a,b, thickness=5.0, renderer=None):
+    def __init__(self, a,b, thickness=5.0, friction=0.99, renderer=None):
         body = pm.Body(pm.inf, pm.inf)
-        shape= pm.Segment(body, a, b, thickness/2.0)
-        shape.friction = 0.99
+        shape= pm.Segment(body, Vec2d(a[0],a[1]), Vec2d(b[0],b[1]), thickness/2.0)
+        shape.friction = friction
         SimpleEntity.__init__(self, shape, renderer)

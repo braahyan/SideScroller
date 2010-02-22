@@ -23,3 +23,6 @@ class World(pm.Space):
         self.static_entities.append(entity)
         for x in entity.shapes:
             self.add_static(x)
+            
+class Level:
+    pass
