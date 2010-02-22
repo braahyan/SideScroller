@@ -13,6 +13,7 @@ COLLTYPE_MOUSE = 1
 circle_renderer = renderers.CircleRenderer()        
 platform_renderer = renderers.PlatformRenderer()
 
+#POOOPS!
 class HelloWorldWindow(pyglet.window.Window):
     def __init__(self):
         super(HelloWorldWindow, self).__init__()
