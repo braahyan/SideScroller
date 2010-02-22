@@ -3,6 +3,7 @@ from pyglet.window import mouse
 import primitives
 import pymunk as pm
 from pymunk import Vec2d
+import cPickle
 
 COLLTYPE_DEFAULT = 0
 COLLTYPE_MOUSE = 1
@@ -11,14 +12,18 @@ class World(pm.Space):
     def __init__(self, gravity=(0.0, -900.0)):
         pm.Space.__init__(self)
         self.gravity = Vec2d(gravity[0],gravity[1])
+        self.entities = []
+        self.static_entities = []
     
     def addEntity(self, entity):
+        self.entities.append(entity)
         for x in entity.shapes:
             self.add(x, x.body)
         for x in entity.joints:
             self.add(x)
 
     def addStaticEntity(self, entity):
+        self.static_entities.append(entity)
         for x in entity.shapes:
             self.add_static(x)
         
@@ -86,21 +91,15 @@ class HelloWorldWindow(pyglet.window.Window):
         #self.circle = primitives.Circle(x=320, y=240, z=1, width=20, color=(1,1,1,1), stroke=200)
         pm.init_pymunk()
         self.space = World()
-        self.balls = []
-        self.sprites = []
         
-        self.line = primitives.Line( a=(1,1), b=(100,100), z=1, color=(1,1,1,1), stroke=10)
-        self.lines = []
-        
-        #self.mouse_body = pm.Body(pm.inf, pm.inf)
-        #self.mouse_shape = pm.Circle(self.mouse_body, 3, Vec2d(0,0))
-        #self.mouse_shape.collision_type = COLLTYPE_MOUSE
-        #self.space.add(self.mouse_shape)
-        #self.space.add_collisionpair_func(COLLTYPE_MOUSE, COLLTYPE_DEFAULT, mouse_coll_func, ("hello", "world"))
+        self.mouse_body = pm.Body(pm.inf, pm.inf)
+        self.mouse_shape = pm.Circle(self.mouse_body, 3, Vec2d(0,0))
+        self.mouse_shape.collision_type = COLLTYPE_MOUSE
+        self.space.add(self.mouse_shape)
+        self.space.add_collisionpair_func(COLLTYPE_MOUSE, COLLTYPE_DEFAULT, mouse_coll_func, ("hello", "world"))
         
         self.line_point1 = None
         self.line_point2 = None
-        self.static_lines = []
         self.run_physics = True
         pyglet.clock.schedule_interval(self.update, 1.0/100)
         #music = pyglet.resource.media('music.mp3')
@@ -112,15 +111,13 @@ class HelloWorldWindow(pyglet.window.Window):
         if self.run_physics:
             for x in range(3):
                 self.space.step(dt/3.0)
-            for entity in self.sprites:
-                entity.render()
 
     def on_draw(self):
         self.clear()
         primitives.Line( a=(1,1), b=(100,100), z=1, color=(1,1,1,1), stroke=10)
-        for x in self.sprites:
+        for x in self.space.entities:
             x.render()
-        for x in self.lines:
+        for x in self.space.static_entities:
             x.render()
         if self.line_point1 is not None and self.line_point2 is not None:
             lp1 = self.line_point1
@@ -133,16 +130,15 @@ class HelloWorldWindow(pyglet.window.Window):
             self.run_physics = not self.run_physics            
         print symbol
     
-    #def on_mouse_motion(self,x,y,dx,dy):
-        #mouse_pos = Vec2d(x,y)
-        #self.mouse_body.position = mouse_pos
+    def on_mouse_motion(self,x,y,dx,dy):
+        mouse_pos = Vec2d(x,y)
+        self.mouse_body.position = mouse_pos
 
     def on_mouse_press(self, x, y, button, modifiers):
         if button == mouse.LEFT:
             p = x, y
             ball = Ball(p, 10, 10, 100, .5, renderer = circle_renderer)
             self.space.addEntity(ball)
-            self.sprites.append(ball)
             print 'The left mouse button was pressed.'
         elif button == mouse.RIGHT:
             if self.line_point1 is None:
@@ -159,7 +155,6 @@ class HelloWorldWindow(pyglet.window.Window):
                 line_point2 = Vec2d(x, y)
                 print self.line_point1, line_point2
                 platform = Platform(self.line_point1, line_point2, 5, renderer=platform_renderer)
-                self.lines.append(platform)
                 self.space.addStaticEntity(platform)
                 self.line_point1 = None
         pass
