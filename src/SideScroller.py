@@ -10,7 +10,7 @@ from pymunk import Vec2d
 COLLTYPE_DEFAULT = 0
 COLLTYPE_MOUSE = 1
         
-circle_renderer = renderers.CircleRenderer()        
+circle_renderer = renderers.CircleRenderer()
 platform_renderer = renderers.PlatformRenderer()
 
 #POOOPS!

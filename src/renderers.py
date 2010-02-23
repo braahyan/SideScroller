@@ -3,14 +3,18 @@ Created on Feb 21, 2010
 
 @author: Bryan
 '''
-
+import random
 import primitives
 class CircleRenderer:
     def __init__(self, width=20, color=(1,1,1,1), stroke=200):
         self.primitive = primitives.Circle(x=0, y=0, z=1, width=width, color=color, stroke=stroke)
+        self.random = random.Random()
         pass
     def render(self, entity):
         ball = entity.shapes[0]
+        if not hasattr(entity, "color"):
+            entity.color = (self.random.random(),self.random.random(),self.random.random(),self.random.random())
+        self.primitive.color = entity.color
         self.primitive.x = ball.body.position[0]
         self.primitive.y = ball.body.position[1]
         self.primitive.width = ball.radius * 2
