@@ -12,6 +12,7 @@ COLLTYPE_MOUSE = 1
         
 circle_renderer = renderers.CircleRenderer()
 platform_renderer = renderers.PlatformRenderer()
+tile_renderer = renderers.TileRenderer()
 
 #POOOPS!
 class HelloWorldWindow(pyglet.window.Window):
@@ -20,6 +21,10 @@ class HelloWorldWindow(pyglet.window.Window):
         
         pm.init_pymunk()
         self.space = world.World()
+        
+        #load level
+        level = entity.Level(renderer = tile_renderer)
+        self.space.addStaticEntity(level)
         
         self.mouse_body = pm.Body(pm.inf, pm.inf)
         self.mouse_shape = pm.Circle(self.mouse_body, 3, Vec2d(0,0))
@@ -101,5 +106,6 @@ def mouse_coll_func(s1, s2, cs, normal_coef, data):
 
 if __name__ == '__main__':
     window = HelloWorldWindow()
+    
     #window.push_handlers(pyglet.window.event.WindowEventLogger())
     pyglet.app.run()

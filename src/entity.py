@@ -47,3 +47,32 @@ class Platform(SimpleEntity):
         shape= pm.Segment(body, Vec2d(a[0],a[1]), Vec2d(b[0],b[1]), thickness/2.0)
         shape.friction = friction
         SimpleEntity.__init__(self, shape, renderer)
+                
+class Level(Entity):
+    #importing levels later
+    def __init__(self, shapes=[], renderer=None):
+        shapes = []
+        self.tile_size = 30
+        self.level_tiles = [(0,0),(30,0),(60,0),(0,30),(30,30)] #lolz 5 tile level
+        for tile in self.level_tiles:
+            body = pm.Body(pm.inf, pm.inf)
+            shape = pm.Poly(body, self.tileToVertices(tile))
+            shapes.append(shape)
+        Entity.__init__(self, shapes, [], renderer)
+    
+    def tileToQuad(self, indexTuple):
+        x = indexTuple[0]
+        y = indexTuple[1]
+        return (x, y, 
+                x+self.tile_size,y,
+                x+self.tile_size, y+self.tile_size,
+                x, y+self.tile_size                
+                )
+    def tileToVertices(self, indexTuple):
+        x = indexTuple[0]
+        y = indexTuple[1]
+        return [(x, y), 
+                (x+self.tile_size,y),
+                (x+self.tile_size, y+self.tile_size),
+                (x, y+self.tile_size)                
+                ]
