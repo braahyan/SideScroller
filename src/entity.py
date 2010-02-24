@@ -25,13 +25,21 @@ class SimpleEntity(Entity):
     def __init__(self, shape, renderer = None):
         Entity.__init__(self, [shape], renderer=renderer)
 
-class Ball(SimpleEntity):
-    def __init__(self, position,radius, mass = 10, inertia=100, friction = 0.5, renderer=None):
+class ControllableEntity(Entity):
+    def __init__(self,shapes=[], joints=[], agent=None, renderer=None):
+        self.agent = agent
+        Entity.__init__(self, shapes, joints, renderer)
+    def update(self):
+        self.agent.update(self)
+        pass
+
+class Ball(ControllableEntity):
+    def __init__(self, position,radius, mass = 10, inertia=100, friction = 0.5, agent=None, renderer=None):
         body = pm.Body(mass, inertia)
         body.position = position
         shape = pm.Circle(body, radius, Vec2d(0,0))
         shape.friction = friction
-        SimpleEntity.__init__(self, shape, renderer)
+        ControllableEntity.__init__(self, [shape],agent=agent,renderer=renderer)
         
 class Platform(SimpleEntity):
     def __init__(self, a,b, thickness=5.0, friction=0.99, renderer=None):

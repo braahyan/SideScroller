@@ -6,7 +6,7 @@ import entity
 import world
 import pymunk as pm
 from pymunk import Vec2d
-
+import agent
 COLLTYPE_DEFAULT = 0
 COLLTYPE_MOUSE = 1
         
@@ -30,6 +30,10 @@ class HelloWorldWindow(pyglet.window.Window):
         self.line_point1 = None
         self.line_point2 = None
         self.run_physics = True
+        self.key = key.KeyStateHandler()
+        self.push_handlers(self.key)
+        self.keyboard_agent = agent.KeyboardAgent(self.key)
+        self.push_handlers(self.key)
         pyglet.clock.schedule_interval(self.update, 1.0/100)
         #music = pyglet.resource.media('music.mp3')
         #music.play
@@ -40,6 +44,9 @@ class HelloWorldWindow(pyglet.window.Window):
         if self.run_physics:
             for x in range(3):
                 self.space.step(dt/3.0)
+            for y in self.space.entities:
+                if hasattr(y, "update"):
+                    y.update()
 
     def on_draw(self):
         self.clear()
@@ -64,7 +71,7 @@ class HelloWorldWindow(pyglet.window.Window):
     def on_mouse_press(self, x, y, button, modifiers):
         if button == mouse.LEFT:
             p = x, y
-            ball = entity.Ball(p, 10, 10, 100, .5, renderer = circle_renderer)
+            ball = entity.Ball(p, 10, 10, 100, .5, agent=self.keyboard_agent,renderer = circle_renderer)
             self.space.addEntity(ball)
             print 'The left mouse button was pressed.'
         elif button == mouse.RIGHT:
