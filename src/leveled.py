@@ -1,4 +1,4 @@
-import Tkinter, random
+import Tkinter, random, math
 class Leveled:
     def __init__(self, t):
         #make a menu, don't know why menubutton needs to get created, but it does
@@ -29,8 +29,8 @@ class Leveled:
             
     def drawSmilie(self, event):
         ##figure out how to round a number based on where the user clicked and a given gridsize
-        x = event.x
-        y = event.y 
+        x = event.x - (event.x%30)
+        y = event.y - (event.y%30)
         event.widget.create_image(x, y, image = self.i, anchor=Tkinter.NW)
         print 'smilie drawn: %d, %d' % (x,y)
 
