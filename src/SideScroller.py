@@ -37,9 +37,15 @@ class HelloWorldWindow(pyglet.window.Window):
         self.line_point1 = None
         self.line_point2 = None
         self.run_physics = True
+        self.keyboard = key.KeyStateHandler()
+        self.push_handlers(self.keyboard)
         self.input_manager = inputmanager.KeyboardManager()
         self.keyboard_agent = agent.KeyboardAgent(self.input_manager)
-        pyglet.clock.schedule_interval(self.update, 1.0/100)
+        self.fps = 60
+        pyglet.clock.schedule_interval(self.update, 1.0/self.fps)
+        pyglet.clock.schedule_interval(self.update_keys, 1.0/self.fps)
+        pyglet.clock.set_fps_limit(self.fps*2)
+        self.fps_display = pyglet.clock.ClockDisplay()
         #music = pyglet.resource.media('music.mp3')
         #music.play
         #sound = pyglet.resource.media('shot.wav', streaming=False)
@@ -50,9 +56,12 @@ class HelloWorldWindow(pyglet.window.Window):
             for x in range(3):
                 self.space.step(dt/3.0)
             for y in self.space.entities:
-                if hasattr(y, "update"):
-                    y.update(self.space)
+                y.update(self.space)
             self.input_manager.clear()
+    
+    def update_keys(self,dt):
+        for key in [x for x in self.input_manager.key_config.keys() if self.keyboard[x]]:
+            self.input_manager.append(key, True)
 
     def on_draw(self):
         self.clear()
@@ -64,10 +73,10 @@ class HelloWorldWindow(pyglet.window.Window):
             lp1 = self.line_point1
             lp2 = self.line_point2
             pyglet.graphics.draw(2, pyglet.gl.GL_LINES, ('v2i', (int(lp1[0]), int(lp1[1]), int(lp2[0]), int(lp2[1]))))
+        self.fps_display.draw()
         
     
     def on_key_press(self, symbol, modifiers):
-        self.input_manager.append(symbol)
         if symbol == key.SPACE:
             self.run_physics = not self.run_physics
     
@@ -96,7 +105,6 @@ class HelloWorldWindow(pyglet.window.Window):
                 platform = entity.Platform(self.line_point1, line_point2, 5, renderer=platform_renderer)
                 self.space.addStaticEntity(platform)
                 self.line_point1 = None
-        pass
             
 def mouse_coll_func(s1, s2, cs, normal_coef, data):
     """Simple callback that increases the radius of circles touching the mouse"""
