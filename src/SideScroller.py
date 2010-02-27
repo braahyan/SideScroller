@@ -14,7 +14,7 @@ COLLTYPE_MOUSE = 1
         
 circle_renderer = renderers.CircleRenderer()
 platform_renderer = renderers.PlatformRenderer()
-tile_renderer = renderers.TileRenderer()
+tile_renderer = renderers.TileRenderer(640, 480, 30)
 
 #POOOPS!
 class HelloWorldWindow(pyglet.window.Window):

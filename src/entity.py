@@ -50,10 +50,10 @@ class Platform(SimpleEntity):
                 
 class Level(Entity):
     #importing levels later
-    def __init__(self, shapes=[], renderer=None):
+    def __init__(self, shapes=[], tile_size=30, renderer=None):
         shapes = []
-        self.tile_size = 30
-        self.level_tiles = [(0,0),(30,0),(60,0),(0,30),(30,30)] #lolz 5 tile level
+        self.tile_size = tile_size
+        self.level_tiles = [(1,1),(2,1),(3,1),(4,1),(5,1), (7,1)] #lolz 5 tile level
         for tile in self.level_tiles:
             body = pm.Body(pm.inf, pm.inf)
             shape = pm.Poly(body, self.tileToVertices(tile))
@@ -61,16 +61,20 @@ class Level(Entity):
         Entity.__init__(self, shapes, [], renderer)
     
     def tileToQuad(self, indexTuple):
-        x = indexTuple[0]
-        y = indexTuple[1]
+        x = indexTuple[0] * self.tile_size
+        y = indexTuple[1] * self.tile_size
+        x-=self.tile_size
+        y-=self.tile_size
         return (x, y, 
                 x+self.tile_size,y,
                 x+self.tile_size, y+self.tile_size,
-                x, y+self.tile_size                
+                x, y+self.tile_size
                 )
     def tileToVertices(self, indexTuple):
-        x = indexTuple[0]
-        y = indexTuple[1]
+        x = indexTuple[0] * self.tile_size
+        y = indexTuple[1] * self.tile_size
+        x-=self.tile_size
+        y-=self.tile_size
         return [(x, y), 
                 (x+self.tile_size,y),
                 (x+self.tile_size, y+self.tile_size),

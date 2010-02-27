@@ -29,9 +29,9 @@ class PlatformRenderer:
         
 class TileRenderer:
     #going to cheat here for now, should be able to get access to the window size
-    def __init__(self):
-        self.window_x = 640
-        self.window_y = 480
+    def __init__(self, width, height, tileSize):
+        self.window_x = width
+        self.window_y = height
     
     def render(self, entity):
         #cheating here too, should use indexed quad rendering to share indices

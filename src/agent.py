@@ -18,4 +18,3 @@ class KeyboardAgent:
                 x.body.apply_impulse((0,1000))
             if self.input_manager["down"]:
                 x.body.apply_impulse((0,-1000))
-            
