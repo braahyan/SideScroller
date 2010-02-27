@@ -8,6 +8,7 @@ import pymunk as pm
 from pymunk import Vec2d
 import agent
 import inputmanager
+
 COLLTYPE_DEFAULT = 0
 COLLTYPE_MOUSE = 1
         
@@ -67,7 +68,6 @@ class HelloWorldWindow(pyglet.window.Window):
     
     def on_key_press(self, symbol, modifiers):
         self.input_manager.append(symbol)
-        print self.input_manager.data
         if symbol == key.SPACE:
             self.run_physics = not self.run_physics
     
@@ -80,7 +80,6 @@ class HelloWorldWindow(pyglet.window.Window):
             p = x, y
             ball = entity.Ball(p, 10, 10, 100, .5, agent=self.keyboard_agent,renderer = circle_renderer)
             self.space.addEntity(ball)
-            print 'The left mouse button was pressed.'
         elif button == mouse.RIGHT:
             if self.line_point1 is None:
                     self.line_point1 = x,y
@@ -94,7 +93,6 @@ class HelloWorldWindow(pyglet.window.Window):
         if button == mouse.RIGHT:
             if self.line_point1 is not None:
                 line_point2 = Vec2d(x, y)
-                print self.line_point1, line_point2
                 platform = entity.Platform(self.line_point1, line_point2, 5, renderer=platform_renderer)
                 self.space.addStaticEntity(platform)
                 self.line_point1 = None
