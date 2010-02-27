@@ -6,6 +6,9 @@ Created on Feb 21, 2010
 
 import pymunk as pm
 from pymunk import Vec2d
+
+COLLTYPE_PLATFORM = 2
+
 class Entity:
     '''class for physics object represented by some renderer'''
     def __init__(self, shapes=[],joints=[], renderer=None):
@@ -46,6 +49,7 @@ class Platform(SimpleEntity):
         body = pm.Body(pm.inf, pm.inf)
         shape= pm.Segment(body, Vec2d(a[0],a[1]), Vec2d(b[0],b[1]), thickness/2.0)
         shape.friction = friction
+        shape.collision_type = COLLTYPE_PLATFORM
         SimpleEntity.__init__(self, shape, renderer)
                 
 class Level(Entity):

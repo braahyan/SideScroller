@@ -11,6 +11,7 @@ import inputmanager
 
 COLLTYPE_DEFAULT = 0
 COLLTYPE_MOUSE = 1
+COLLTYPE_PLATFORM = 2
         
 circle_renderer = renderers.CircleRenderer()
 platform_renderer = renderers.PlatformRenderer()
@@ -30,6 +31,7 @@ class HelloWorldWindow(pyglet.window.Window):
         
         self.mouse_body = pm.Body(pm.inf, pm.inf)
         self.mouse_shape = pm.Circle(self.mouse_body, 3, Vec2d(0,0))
+        self.mouse_shape.sensor = True
         self.mouse_shape.collision_type = COLLTYPE_MOUSE
         self.space.add(self.mouse_shape)
         self.space.add_collisionpair_func(COLLTYPE_MOUSE, COLLTYPE_DEFAULT, mouse_coll_func, ("hello", "world"))
