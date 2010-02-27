@@ -29,8 +29,8 @@ class ControllableEntity(Entity):
     def __init__(self,shapes=[], joints=[], agent=None, renderer=None):
         self.agent = agent
         Entity.__init__(self, shapes, joints, renderer)
-    def update(self):
-        self.agent.update(self)
+    def update(self, world):
+        self.agent.update(self, world)
         pass
 
 class Ball(ControllableEntity):

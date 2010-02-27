@@ -3,16 +3,14 @@ Created on Feb 23, 2010
 
 @author: Bryan
 '''
-import pyglet
-from pyglet.window import key
 
 class KeyboardAgent:
-    def __init__(self, keyboard_state):
-        self.keyboard_state = keyboard_state
+    def __init__(self, input_manager):
+        self.input_manager = input_manager
         pass
-    def update(self, entity):
+    def update(self, entity, world):
         for x in entity.shapes:
-            if self.keyboard_state[key.RIGHT]:
-                x.body.apply_impulse((100,0))
-        pass
-        
+            if self.input_manager["right"]:
+                x.body.apply_impulse((1000,0))
+            if self.input_manager["left"]:
+                x.body.apply_impulse((-1000,0))

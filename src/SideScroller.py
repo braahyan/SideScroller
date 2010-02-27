@@ -7,6 +7,7 @@ import world
 import pymunk as pm
 from pymunk import Vec2d
 import agent
+import inputmanager
 COLLTYPE_DEFAULT = 0
 COLLTYPE_MOUSE = 1
         
@@ -35,10 +36,8 @@ class HelloWorldWindow(pyglet.window.Window):
         self.line_point1 = None
         self.line_point2 = None
         self.run_physics = True
-        self.key = key.KeyStateHandler()
-        self.push_handlers(self.key)
-        self.keyboard_agent = agent.KeyboardAgent(self.key)
-        self.push_handlers(self.key)
+        self.input_manager = inputmanager.KeyboardManager()
+        self.keyboard_agent = agent.KeyboardAgent(self.input_manager)
         pyglet.clock.schedule_interval(self.update, 1.0/100)
         #music = pyglet.resource.media('music.mp3')
         #music.play
@@ -51,7 +50,8 @@ class HelloWorldWindow(pyglet.window.Window):
                 self.space.step(dt/3.0)
             for y in self.space.entities:
                 if hasattr(y, "update"):
-                    y.update()
+                    y.update(self.space)
+            self.input_manager.clear()
 
     def on_draw(self):
         self.clear()
@@ -66,6 +66,8 @@ class HelloWorldWindow(pyglet.window.Window):
         
     
     def on_key_press(self, symbol, modifiers):
+        self.input_manager.append(symbol)
+        print self.input_manager.data
         if symbol == key.SPACE:
             self.run_physics = not self.run_physics
     
