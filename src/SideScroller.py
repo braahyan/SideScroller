@@ -36,7 +36,7 @@ class HelloWorldWindow(pyglet.window.Window):
         
         self.line_point1 = None
         self.line_point2 = None
-        self.run_physics = True
+        self.run = True
         self.keyboard = key.KeyStateHandler()
         self.push_handlers(self.keyboard)
         self.input_manager = inputmanager.KeyboardManager()
@@ -52,7 +52,7 @@ class HelloWorldWindow(pyglet.window.Window):
         #sound.play()
 
     def update(self,dt):
-        if self.run_physics:
+        if self.run:
             for x in range(3):
                 self.space.step(dt/3.0)
             for y in self.space.entities:
@@ -60,8 +60,9 @@ class HelloWorldWindow(pyglet.window.Window):
             self.input_manager.clear()
     
     def update_keys(self,dt):
-        for key in [x for x in self.input_manager.key_config.keys() if self.keyboard[x]]:
-            self.input_manager.append(key, True)
+        if self.run:
+            for key in [x for x in self.input_manager.key_config.keys() if self.keyboard[x]]:
+                self.input_manager.append(key, True)
 
     def on_draw(self):
         self.clear()
@@ -78,7 +79,7 @@ class HelloWorldWindow(pyglet.window.Window):
     
     def on_key_press(self, symbol, modifiers):
         if symbol == key.SPACE:
-            self.run_physics = not self.run_physics
+            self.run = not self.run
     
     def on_mouse_motion(self,x,y,dx,dy):
         mouse_pos = Vec2d(x,y)

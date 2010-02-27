@@ -34,7 +34,7 @@ class ControllableEntity(Entity):
         pass
 
 class Ball(ControllableEntity):
-    def __init__(self, position,radius, mass = 10, inertia=100, friction = 0.5, agent=None, renderer=None):
+    def __init__(self, position,radius, mass = 10, inertia=100, friction = 0.99, agent=None, renderer=None):
         body = pm.Body(mass, inertia)
         body.position = position
         shape = pm.Circle(body, radius, Vec2d(0,0))
@@ -50,13 +50,14 @@ class Platform(SimpleEntity):
                 
 class Level(Entity):
     #importing levels later
-    def __init__(self, shapes=[], tile_size=30, renderer=None):
+    def __init__(self, shapes=[], tile_size=30, friction=.99, renderer=None):
         shapes = []
         self.tile_size = tile_size
         self.level_tiles = [(1,1),(2,1),(3,1),(4,1),(5,1), (7,1)] #lolz 5 tile level
         for tile in self.level_tiles:
             body = pm.Body(pm.inf, pm.inf)
             shape = pm.Poly(body, self.tileToVertices(tile))
+            shape.friction = friction
             shapes.append(shape)
         Entity.__init__(self, shapes, [], renderer)
     
