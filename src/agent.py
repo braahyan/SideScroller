@@ -14,3 +14,8 @@ class KeyboardAgent:
                 x.body.apply_impulse((1000,0))
             if self.input_manager["left"]:
                 x.body.apply_impulse((-1000,0))
+            if self.input_manager["up"]:
+                x.body.apply_impulse((0,1000))
+            if self.input_manager["down"]:
+                x.body.apply_impulse((0,-1000))
+            
