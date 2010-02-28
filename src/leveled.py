@@ -12,10 +12,17 @@ class Leveled:
         self.TEX_DIRECTORY = '../img/'
         self.t = Tkinter.Tk()
         
-        #need to make this a list of tuples or some such thing, so we can have texture filenames,
+        #this is a dict so we can have texture filenames,
         #transparency, and other various tile properties, etc etc
-        self.tileTexList = [Tkinter.PhotoImage(file = '%ssmilie-small.gif' % self.TEX_DIRECTORY), 
-                            Tkinter.PhotoImage(file = '%sdirt.gif' % self.TEX_DIRECTORY)]
+        smilie_tile = {
+                       'filename' : 'smilie-small.gif', 
+                       'texture_object' : Tkinter.PhotoImage(file = '%ssmilie-small.gif' % self.TEX_DIRECTORY)
+                      }
+        dirt_tile = {
+                     'filename' : 'dirt.gif', 
+                     'texture_object' : Tkinter.PhotoImage(file = '%sdirt.gif' % self.TEX_DIRECTORY)
+                    }
+        self.tileTexList = [dirt_tile, smilie_tile]
         self.selectedTexture = 0
         
         #make a menu, don't know why menubutton needs to get created, but it does
@@ -29,7 +36,7 @@ class Leveled:
         self.width = 640
         self.height = 480
         self.canvas = Tkinter.Canvas(self.t, width=self.width, height=self.height)
-        self.canvas.bind("<Button-1>",self.drawTexture)
+        self.canvas.bind("<Button-1>",self.drawTileEvent)
         self.canvas.bind("<Button-3>", self.switchTexture)
         self.canvas.pack()
         self.drawGrid()
@@ -44,32 +51,42 @@ class Leveled:
         print 'Darf'
         
     def drawGrid(self):
-        #hardcode gridsize/canvas size for now
         for i in range(1, self.height/self.TILE_SIZE):
             self.canvas.create_line(0, i*self.TILE_SIZE, self.width, i*self.TILE_SIZE)
         for i in range(1, self.width/self.TILE_SIZE):
             self.canvas.create_line(i*self.TILE_SIZE, 0, i*self.TILE_SIZE, self.height)
             
-    def drawTexture(self, event):
-        x = event.x - (event.x%self.TILE_SIZE)
-        y = event.y - (event.y%self.TILE_SIZE)
-        imgToDraw = self.tileTexList[self.selectedTexture]
-        tile_id = event.widget.create_image(x, y, image = imgToDraw, anchor=Tkinter.NW)
-        self.save_level_json['tiles'].append({'x' : (x/self.TILE_SIZE)+1 , 'y' : ((self.height-y)/self.TILE_SIZE)})
-        print self.save_level_json
-        print 'texture drawn: %d, %d' % (x,y)
+    def drawTileEvent(self, event):
+        x = event.x 
+        y = event.y 
+        texture = self.tileTexList[self.selectedTexture]
+        tile_object = {'x' : x, 'y' : y, 'texture' : texture}
+        self.drawTile(tile_object)
+        
+        
+        
+    def drawTile(self, tile):
+        x = tile['x'] - (tile['x']%self.TILE_SIZE)
+        y = tile['y'] - (tile['y']%self.TILE_SIZE)
+        texture_name = tile['texture']['filename']
+        texture = tile['texture']['texture_object']
+        self.canvas.create_image(x, y, image = texture, anchor=Tkinter.NW)
+        self.save_level_json['tiles'].append({'x' : (x/self.TILE_SIZE)+1 , 
+                                              'y' : (self.height-y)/self.TILE_SIZE,
+                                              'texture' : texture_name})
     
     def loadTexture(self):
         try:
             filename = tkFileDialog.askopenfilename()
-            texture = Tkinter.PhotoImage(file = filename)
+            #no_path_filename? crappy name if i ever heard one...
+            no_path_filename = filename.rsplit('/')[1]
+            texture = {'filename' : no_path_filename, 'texture_object' : Tkinter.PhotoImage(file = filename)}
             self.tileTexList.append(texture)
             tkMessageBox.showinfo('Huzzah!', 'File Loaded.')
         except IOError:
             tkMessageBox.showerror('Ohnoes!', 'File Loading Failed!')
             
     def switchTexture(self, event):
-        print 'length of texture list: %d' % len(self.tileTexList)
         self.selectedTexture = (self.selectedTexture + 1) % len(self.tileTexList)
         print 'selected tex #: %d' % self.selectedTexture
     
@@ -99,10 +116,22 @@ class Leveled:
             tkMessageBox.showerror('Ohnoes!', 'Level Loading Failed!')
             
         loaded_json = json.loads(saved_file_string)
-        #need to do a rendering loop, go through the dicts assigning tile textures
-        #use the default for now
+        tile_list = loaded_json['tiles']
+        for json_tile in tile_list:
+            x = (json_tile['x'] * self.TILE_SIZE) - 1
+            y = self.height - (json_tile['y'] * self.TILE_SIZE)
+            texture_name = json_tile['texture']
+            texture_object = self.tileTexList[0] # default value in case tile isn't found
+            for tile_texture in self.tileTexList:
+                if tile_texture['filename'] == texture_name:
+                    texture_object = tile_texture
+            tile = {'x' : x, 'y' : y, 'texture' : texture_object}
+            self.drawTile(tile)
+            
+        save_level_json = loaded_json
         print loaded_json
-        return loaded_json
+        print 'loaded'
+        
         
 # If this line is used, the program does not work
 #App(t)
