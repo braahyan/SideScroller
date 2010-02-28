@@ -25,8 +25,8 @@ class HelloWorldWindow(pyglet.window.Window):
         pm.init_pymunk()
         self.space = world.World()
         self.tilebatch = pyglet.graphics.Batch()
-        self.textures = {"dirt":pyglet.image.load('..\img\dirt.gif'),
-                         "smilie":pyglet.image.load('..\img\smilie.gif')}
+        self.textures = {"dirt":pyglet.image.load('../img/dirt.gif'),
+                         "smilie":pyglet.image.load('../img/smilie.gif')}
         
         #load level
         level_tiles = [(1,1),(2,1),(3,1),(4,1),(5,1), (7,1)]
