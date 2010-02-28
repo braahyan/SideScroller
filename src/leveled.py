@@ -26,8 +26,9 @@ class Leveled:
         menubar.add_command(label="Load Texture", command=self.loadTexture)
         menubar.add_command(label="Quit!", command=self.t.quit)
         self.t.config(menu=menubar)
-
-        self.canvas = Tkinter.Canvas(self.t, width=300, height=300)
+        self.width = 640
+        self.height = 480
+        self.canvas = Tkinter.Canvas(self.t, width=self.width, height=self.height)
         self.canvas.bind("<Button-1>",self.drawTexture)
         self.canvas.bind("<Button-3>", self.switchTexture)
         self.canvas.pack()
@@ -36,8 +37,7 @@ class Leveled:
         
         self.save_level_json = {'tiles' : []}
         
-    def getTileTextures():
-        
+    def getTileTextures(self):
         self.tileTexList.append()
     
     def hello(self):
@@ -45,16 +45,17 @@ class Leveled:
         
     def drawGrid(self):
         #hardcode gridsize/canvas size for now
-        for i in range(1, 10):
-            self.canvas.create_line(0, i*self.TILE_SIZE, 300, i*self.TILE_SIZE)
-            self.canvas.create_line(i*self.TILE_SIZE, 0, i*self.TILE_SIZE, 300)
+        for i in range(1, self.height/self.TILE_SIZE):
+            self.canvas.create_line(0, i*self.TILE_SIZE, self.width, i*self.TILE_SIZE)
+        for i in range(1, self.width/self.TILE_SIZE):
+            self.canvas.create_line(i*self.TILE_SIZE, 0, i*self.TILE_SIZE, self.height)
             
     def drawTexture(self, event):
         x = event.x - (event.x%self.TILE_SIZE)
         y = event.y - (event.y%self.TILE_SIZE)
         imgToDraw = self.tileTexList[self.selectedTexture]
         tile_id = event.widget.create_image(x, y, image = imgToDraw, anchor=Tkinter.NW)
-        self.save_level_json['tiles'].append({'x' : x, 'y' : y})
+        self.save_level_json['tiles'].append({'x' : (x/self.TILE_SIZE)+1 , 'y' : ((self.height-y)/self.TILE_SIZE)})
         print self.save_level_json
         print 'texture drawn: %d, %d' % (x,y)
     
