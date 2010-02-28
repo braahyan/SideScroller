@@ -14,10 +14,14 @@ class Leveled:
         
         #this is a dict so we can have texture filenames,
         #transparency, and other various tile properties, etc etc
-        smilie_tile = {'filename' : 'smilie-small.gif', 
-                       'texture_object' : Tkinter.PhotoImage(file = '%ssmilie-small.gif' % self.TEX_DIRECTORY)}
-        dirt_tile = {'filename' : 'dirt.gif', 'texture_object' : 
-                     Tkinter.PhotoImage(file = '%sdirt.gif' % self.TEX_DIRECTORY)}
+        smilie_tile = {
+                       'filename' : 'smilie-small.gif', 
+                       'texture_object' : Tkinter.PhotoImage(file = '%ssmilie-small.gif' % self.TEX_DIRECTORY)
+                      }
+        dirt_tile = {
+                     'filename' : 'dirt.gif', 
+                     'texture_object' : Tkinter.PhotoImage(file = '%sdirt.gif' % self.TEX_DIRECTORY)
+                    }
         self.tileTexList = [dirt_tile, smilie_tile]
         self.selectedTexture = 0
         
