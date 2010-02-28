@@ -7,12 +7,14 @@ import world
 import pymunk as pm
 from pymunk import Vec2d
 import agent
+from camera import Camera
 import inputmanager
 
 COLLTYPE_DEFAULT = 0
 COLLTYPE_MOUSE = 1
 COLLTYPE_PLATFORM = 2
-        
+
+camera = Camera(640, 480)
 circle_renderer = renderers.CircleRenderer()
 platform_renderer = renderers.PlatformRenderer()
 
@@ -25,12 +27,12 @@ class HelloWorldWindow(pyglet.window.Window):
         pm.init_pymunk()
         self.space = world.World()
         self.tilebatch = pyglet.graphics.Batch()
-        self.textures = {"dirt":pyglet.image.load('..\img\dirt.gif'),
-                         "smilie":pyglet.image.load('..\img\smilie.gif')}
+        self.textures = {"dirt":pyglet.image.load('../img/dirt.gif'),
+                         "smilie":pyglet.image.load('../img/smilie.gif')}
         
         #load level
-        level_tiles = [(1,1),(2,1),(3,1),(4,1),(5,1), (7,1)]
-        tile_renderer = renderers.TileRenderer(self.textures["dirt"], level_tiles)
+        level_tiles = [(x,1) for x in range(1,30)]
+        tile_renderer = renderers.TileRenderer(self.textures["dirt"], level_tiles, camera)
         level = entity.Terrain(level_tiles=level_tiles,renderer = tile_renderer)
         self.space.addStaticEntity(level)
         
@@ -60,8 +62,8 @@ class HelloWorldWindow(pyglet.window.Window):
 
     def update(self,dt):
         if self.run:
-            for x in range(3):
-                self.space.step(dt/3.0)
+            for x in range(0,3):
+                self.space.step(dt/3)
             for y in self.space.entities:
                 y.update(self.space)
             self.input_manager.clear()

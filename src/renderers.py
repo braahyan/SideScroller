@@ -29,12 +29,21 @@ class PlatformRenderer:
         
 class TileRenderer:
     #going to cheat here for now, should be able to get access to the window size
-    def __init__(self,texture,tiles,tile_size=30):
+    def __init__(self,texture,tiles, camera, tile_size=30):
         self.texture = texture
         self.batch = pyglet.graphics.Batch()
         self.sprites = []
+        self.camera = camera
+        self.tile_size = tile_size
         for tile in tiles:
-            self.sprites.append(pyglet.sprite.Sprite(self.texture, (tile[0]-1)*tile_size, (tile[1]-1)*tile_size, batch=self.batch))
+            sprite = pyglet.sprite.Sprite(self.texture, (tile[0]-1)*tile_size, (tile[1]-1)*tile_size, batch=self.batch)
+            sprite.tile_coord = tile
+            self.sprites.append(sprite)
 
     def render(self, entity):
+        for sprite in self.sprites:
+            a,b = sprite.tile_coord
+            x,y = self.camera.translate((a-1)*self.tile_size, (b-1)*self.tile_size,)
+            sprite.x = x
+            sprite.y = y
         self.batch.draw()
