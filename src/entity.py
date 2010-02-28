@@ -52,12 +52,12 @@ class Platform(SimpleEntity):
         shape.collision_type = COLLTYPE_PLATFORM
         SimpleEntity.__init__(self, shape, renderer)
                 
-class Level(Entity):
+class Terrain(Entity):
     #importing levels later
-    def __init__(self, shapes=[], tile_size=30, friction=.99, renderer=None):
+    def __init__(self, level_tiles, shapes=[], tile_size=30, friction=.99, renderer=None):
         shapes = []
         self.tile_size = tile_size
-        self.level_tiles = [(1,1),(2,1),(3,1),(4,1),(5,1), (7,1)] #lolz 5 tile level
+        self.level_tiles = level_tiles
         for tile in self.level_tiles:
             body = pm.Body(pm.inf, pm.inf)
             shape = pm.Poly(body, self.tileToVertices(tile))

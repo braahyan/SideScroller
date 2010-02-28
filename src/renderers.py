@@ -29,12 +29,12 @@ class PlatformRenderer:
         
 class TileRenderer:
     #going to cheat here for now, should be able to get access to the window size
-    def __init__(self, width, height, tileSize):
-        self.window_x = width
-        self.window_y = height
-    
+    def __init__(self,texture,tiles,tile_size=30):
+        self.texture = texture
+        self.batch = pyglet.graphics.Batch()
+        self.sprites = []
+        for tile in tiles:
+            self.sprites.append(pyglet.sprite.Sprite(self.texture, (tile[0]-1)*tile_size, (tile[1]-1)*tile_size, batch=self.batch))
+
     def render(self, entity):
-        #cheating here too, should use indexed quad rendering to share indices
-        #figure out true batching later
-        for tile in entity.level_tiles:
-            pyglet.graphics.draw(4, pyglet.gl.GL_QUADS, ('v2i', entity.tileToQuad(tile)))
+        self.batch.draw()

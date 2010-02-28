@@ -15,7 +15,7 @@ COLLTYPE_PLATFORM = 2
         
 circle_renderer = renderers.CircleRenderer()
 platform_renderer = renderers.PlatformRenderer()
-tile_renderer = renderers.TileRenderer(640, 480, 30)
+
 
 #POOOPS!
 class HelloWorldWindow(pyglet.window.Window):
@@ -24,9 +24,14 @@ class HelloWorldWindow(pyglet.window.Window):
         
         pm.init_pymunk()
         self.space = world.World()
+        self.tilebatch = pyglet.graphics.Batch()
+        self.textures = {"dirt":pyglet.image.load('..\img\dirt.gif'),
+                         "smilie":pyglet.image.load('..\img\smilie.gif')}
         
         #load level
-        level = entity.Level(renderer = tile_renderer)
+        level_tiles = [(1,1),(2,1),(3,1),(4,1),(5,1), (7,1)]
+        tile_renderer = renderers.TileRenderer(self.textures["dirt"], level_tiles)
+        level = entity.Terrain(level_tiles=level_tiles,renderer = tile_renderer)
         self.space.addStaticEntity(level)
         
         self.mouse_body = pm.Body(pm.inf, pm.inf)
