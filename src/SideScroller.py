@@ -53,6 +53,7 @@ class HelloWorldWindow(pyglet.window.Window):
         pyglet.clock.schedule_interval(self.update_keys, 1.0/self.fps)
         pyglet.clock.set_fps_limit(self.fps*2)
         self.fps_display = pyglet.clock.ClockDisplay()
+        self.anim_renderer = renderers.SpriteRenderer()
         #music = pyglet.resource.media('music.mp3')
         #music.play
         #sound = pyglet.resource.media('shot.wav', streaming=False)
@@ -81,6 +82,7 @@ class HelloWorldWindow(pyglet.window.Window):
             lp1 = self.line_point1
             lp2 = self.line_point2
             pyglet.graphics.draw(2, pyglet.gl.GL_LINES, ('v2i', (int(lp1[0]), int(lp1[1]), int(lp2[0]), int(lp2[1]))))
+        self.anim_renderer.render()
         self.fps_display.draw()
         
     
