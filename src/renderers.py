@@ -38,3 +38,20 @@ class TileRenderer:
 
     def render(self, entity):
         self.batch.draw()
+        
+class SpriteRenderer:
+    #hardcodizzle
+    def __init__(self):
+        self.image_list = [pyglet.image.load('../img/anim/frame1.png'),
+                            pyglet.image.load('../img/anim/frame2.png'),
+                            pyglet.image.load('../img/anim/frame3.png'),
+                            pyglet.image.load('../img/anim/frame4.png'),
+                            pyglet.image.load('../img/anim/frame5.png'),
+                            pyglet.image.load('../img/anim/frame6.png'),
+                            pyglet.image.load('../img/anim/frame7.png')]
+    def render(self)
+        bin = pyglet.image.atlas.TextureBin()
+        images = [bin.add(image) for image in self.image_list]
+        #ANIMATE STUFF
+        
+        
