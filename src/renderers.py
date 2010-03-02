@@ -7,6 +7,7 @@ Created on Feb 21, 2010
 import primitives
 import pyglet
 import quadtree
+import SideScroller
 
 class CircleRenderer:
     def __init__(self, camera, width=20, color=(1,1,1,1), stroke=200):
@@ -68,3 +69,25 @@ class TileRenderer:
             sprite.x = x
             sprite.y = y
         self.batch.draw()
+        self.batch.draw()
+        
+class SpriteRenderer:
+    #hardcodizzle
+    def __init__(self):
+        self.image_list = [pyglet.image.load('../img/anim/frame1.png'),
+                           pyglet.image.load('../img/anim/frame2.png'),
+                           pyglet.image.load('../img/anim/frame3.png'),
+                           pyglet.image.load('../img/anim/frame4.png'),
+                           pyglet.image.load('../img/anim/frame5.png'),
+                           pyglet.image.load('../img/anim/frame6.png'),
+                           pyglet.image.load('../img/anim/frame7.png')]
+        bin = pyglet.image.atlas.TextureBin()
+        images = [bin.add(image) for image in self.image_list]
+        animation = pyglet.image.Animation.from_image_sequence(images, 0.1, True)
+        self.sprite = pyglet.sprite.Sprite(animation, x=200, y=50)
+    def render(self):
+        self.sprite.draw()
+        #ANIMATE STUFF
+        #pyglet.resource.
+        
+execfile('SideScroller.py')

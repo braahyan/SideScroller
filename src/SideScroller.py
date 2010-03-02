@@ -57,6 +57,7 @@ class HelloWorldWindow(pyglet.window.Window):
         self.fps_display = pyglet.clock.ClockDisplay()
         self.ball = entity.Ball((20,300), 10, 10, 100, .5, agent=self.keyboard_agent,renderer = circle_renderer)
         self.space.addEntity(self.ball)
+        self.anim_renderer = renderers.SpriteRenderer()
         #music = pyglet.resource.media('music.mp3')
         #music.play
         #sound = pyglet.resource.media('shot.wav', streaming=False)
@@ -82,6 +83,7 @@ class HelloWorldWindow(pyglet.window.Window):
             x.render()
         for x in self.space.static_entities:
             x.render()
+        self.anim_renderer.render()
         self.fps_display.draw()
         
     
