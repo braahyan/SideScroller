@@ -49,7 +49,7 @@ class SpriteRenderer:
                             pyglet.image.load('../img/anim/frame5.png'),
                             pyglet.image.load('../img/anim/frame6.png'),
                             pyglet.image.load('../img/anim/frame7.png')]
-    def render(self)
+    def render(self):
         bin = pyglet.image.atlas.TextureBin()
         images = [bin.add(image) for image in self.image_list]
         #ANIMATE STUFF
