@@ -14,9 +14,9 @@ COLLTYPE_DEFAULT = 0
 COLLTYPE_MOUSE = 1
 COLLTYPE_PLATFORM = 2
 
-camera = Camera(640, 480)
-circle_renderer = renderers.CircleRenderer()
-platform_renderer = renderers.PlatformRenderer()
+camera = Camera(640, 480,offset=(-30,0))
+circle_renderer = renderers.CircleRenderer(camera)
+platform_renderer = renderers.PlatformRenderer(camera)
 
 
 #POOOPS!
@@ -27,12 +27,12 @@ class HelloWorldWindow(pyglet.window.Window):
         pm.init_pymunk()
         self.space = world.World()
         self.tilebatch = pyglet.graphics.Batch()
-        self.textures = {"dirt":pyglet.image.load('../img/dirt.gif'),
-                         "smilie":pyglet.image.load('../img/smilie.gif')}
+        self.textures = {"dirt.gif":pyglet.image.load('../img/dirt.gif'),
+                         "smilie.gif":pyglet.image.load('../img/smilie.gif')}
         
         #load level
-        level_tiles = [(x,1) for x in range(1,30)]
-        tile_renderer = renderers.TileRenderer(self.textures["dirt"], level_tiles, camera)
+        level_tiles = [(x,1,"dirt.gif") for x in range(1,30)]
+        tile_renderer = renderers.TileRenderer(self.textures, level_tiles, camera)
         level = entity.Terrain(level_tiles=level_tiles,renderer = tile_renderer)
         self.space.addStaticEntity(level)
         
@@ -55,6 +55,8 @@ class HelloWorldWindow(pyglet.window.Window):
         pyglet.clock.schedule_interval(self.update_keys, 1.0/self.fps)
         pyglet.clock.set_fps_limit(self.fps*2)
         self.fps_display = pyglet.clock.ClockDisplay()
+        self.ball = entity.Ball((20,300), 10, 10, 100, .5, agent=self.keyboard_agent,renderer = circle_renderer)
+        self.space.addEntity(self.ball)
         #music = pyglet.resource.media('music.mp3')
         #music.play
         #sound = pyglet.resource.media('shot.wav', streaming=False)
@@ -67,6 +69,7 @@ class HelloWorldWindow(pyglet.window.Window):
             for y in self.space.entities:
                 y.update(self.space)
             self.input_manager.clear()
+            camera.update(self.ball.position[0], self.ball.position[1])
     
     def update_keys(self,dt):
         if self.run:
@@ -79,10 +82,6 @@ class HelloWorldWindow(pyglet.window.Window):
             x.render()
         for x in self.space.static_entities:
             x.render()
-        if self.line_point1 is not None and self.line_point2 is not None:
-            lp1 = self.line_point1
-            lp2 = self.line_point2
-            pyglet.graphics.draw(2, pyglet.gl.GL_LINES, ('v2i', (int(lp1[0]), int(lp1[1]), int(lp2[0]), int(lp2[1]))))
         self.fps_display.draw()
         
     
@@ -95,22 +94,20 @@ class HelloWorldWindow(pyglet.window.Window):
         self.mouse_body.position = mouse_pos
 
     def on_mouse_press(self, x, y, button, modifiers):
-        if button == mouse.LEFT:
-            p = x, y
-            ball = entity.Ball(p, 10, 10, 100, .5, agent=self.keyboard_agent,renderer = circle_renderer)
-            self.space.addEntity(ball)
-        elif button == mouse.RIGHT:
+        if button == mouse.RIGHT:
             if self.line_point1 is None:
-                    self.line_point1 = x,y
-                    self.line_point2 = x,y
+                    self.line_point1 = camera.reverse_translate(x,y)
+                    self.line_point2 = camera.reverse_translate(x,y)
                     
     def on_mouse_drag(self, x, y, dx, dy, buttons, modifiers):
         if mouse.RIGHT & buttons:
+            x,y = camera.reverse_translate(x,y)
             self.line_point2 = Vec2d(x,y)
         
     def on_mouse_release(self, x,y, button, modifiers):
         if button == mouse.RIGHT:
             if self.line_point1 is not None:
+                x,y = camera.reverse_translate(x,y)
                 line_point2 = Vec2d(x, y)
                 platform = entity.Platform(self.line_point1, line_point2, 5, renderer=platform_renderer)
                 self.space.addStaticEntity(platform)

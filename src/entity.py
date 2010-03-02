@@ -43,6 +43,9 @@ class Ball(ControllableEntity):
         shape = pm.Circle(body, radius, Vec2d(0,0))
         shape.friction = friction
         ControllableEntity.__init__(self, [shape],agent=agent,renderer=renderer)
+    def get_position(self):
+        return self.shapes[0].body.position
+    position = property(get_position)
         
 class Platform(SimpleEntity):
     def __init__(self, a,b, thickness=5.0, friction=0.99, renderer=None):
