@@ -7,8 +7,14 @@ Created on Feb 21, 2010
 import primitives
 import pyglet
 import quadtree
-import SideScroller
 
+
+class Renderer:
+    def __init__(self):
+        pass
+    def render(self):
+        raise NotImplemented
+        
 class CircleRenderer:
     def __init__(self, camera, width=20, color=(1,1,1,1), stroke=200):
         self.primitive = primitives.Circle(x=0, y=0, z=1, width=width, color=color, stroke=stroke)
@@ -62,7 +68,7 @@ class TileRenderer:
         right = cx+width
         left = cx
         bottom = cy-height
-        print self.quad_tree.hit(quadtree.Rect(left, top, right, bottom))
+        #print self.quad_tree.hit(quadtree.Rect(left, top, right, bottom))
         for sprite in self.sprites:
             a,b,t = sprite.tile_coord
             x,y = self.camera.translate((a-1)*self.tile_size, (b-1)*self.tile_size,)
@@ -71,9 +77,12 @@ class TileRenderer:
         self.batch.draw()
         self.batch.draw()
         
-class SpriteRenderer:
-    #hardcodizzle
+class FpsRenderer(Renderer):
     def __init__(self):
+        pass
+        
+class HudAngryRenderer(Renderer):
+    def __init__(self, x, y):
         self.image_list = [pyglet.image.load('../img/anim/frame1.png'),
                            pyglet.image.load('../img/anim/frame2.png'),
                            pyglet.image.load('../img/anim/frame3.png'),
@@ -81,13 +90,15 @@ class SpriteRenderer:
                            pyglet.image.load('../img/anim/frame5.png'),
                            pyglet.image.load('../img/anim/frame6.png'),
                            pyglet.image.load('../img/anim/frame7.png')]
+        self.x = x
+        self.y = y
+        self.anim_speed=0.1
+        
         bin = pyglet.image.atlas.TextureBin()
         images = [bin.add(image) for image in self.image_list]
-        animation = pyglet.image.Animation.from_image_sequence(images, 0.1, True)
-        self.sprite = pyglet.sprite.Sprite(animation, x=200, y=50)
+        animation = pyglet.image.Animation.from_image_sequence(images, self.anim_speed, True)
+        self.sprite = pyglet.sprite.Sprite(animation, x=self.x, y=self.y)
     def render(self):
         self.sprite.draw()
-        #ANIMATE STUFF
-        #pyglet.resource.
         
 execfile('SideScroller.py')

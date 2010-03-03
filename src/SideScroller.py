@@ -9,6 +9,7 @@ from pymunk import Vec2d
 import agent
 from camera import Camera
 import inputmanager
+import hud
 
 COLLTYPE_DEFAULT = 0
 COLLTYPE_MOUSE = 1
@@ -57,7 +58,7 @@ class HelloWorldWindow(pyglet.window.Window):
         self.fps_display = pyglet.clock.ClockDisplay()
         self.ball = entity.Ball((20,300), 10, 10, 100, .5, agent=self.keyboard_agent,renderer = circle_renderer)
         self.space.addEntity(self.ball)
-        self.anim_renderer = renderers.SpriteRenderer()
+        self.hud_manager = hud.HudManager()
         #music = pyglet.resource.media('music.mp3')
         #music.play
         #sound = pyglet.resource.media('shot.wav', streaming=False)
@@ -83,8 +84,9 @@ class HelloWorldWindow(pyglet.window.Window):
             x.render()
         for x in self.space.static_entities:
             x.render()
-        self.anim_renderer.render()
+            
         self.fps_display.draw()
+        self.hud_manager.render()
         
     
     def on_key_press(self, symbol, modifiers):
