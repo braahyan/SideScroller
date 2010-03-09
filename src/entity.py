@@ -34,7 +34,6 @@ class ControllableEntity(Entity):
         Entity.__init__(self, shapes, joints, renderer)
     def update(self, world):
         self.agent.update(self, world)
-        pass
 
 class Ball(ControllableEntity):
     def __init__(self, position,radius, mass = 10, inertia=100, friction = 0.99, agent=None, renderer=None):
@@ -46,6 +45,45 @@ class Ball(ControllableEntity):
     def get_position(self):
         return self.shapes[0].body.position
     position = property(get_position)
+    
+class EvilCat(SimpleEntity):
+    def __init__(self, position, x_length, y_length, mass = 10, inertia=100, friction = 0.99, renderer=None):
+        self.poscount = 0
+        body = pm.Body(mass, inertia)
+        initial_bounds = [Vec2d(0, 0),
+                          Vec2d(0,y_length), 
+                          Vec2d(x_length,y_length), 
+                          Vec2d(x_length, 0)]
+        
+        shape = pm.Poly(body, initial_bounds)
+        body.position = position
+        shape.friction = friction
+        SimpleEntity.__init__(self, shape, renderer)
+    def get_position(self):
+        return self.shapes[0].body.position
+    position = property(get_position)
+    
+    def update(self, world):
+        pass
+        #if self.poscount< 100:
+            #print self.get_position()
+            #print self.shapes[0].body._get_angle() #Radians!!!
+            #print self.shapes[0].get_points()
+            #self.poscount += 1
+            
+class EvilCatCircle(SimpleEntity):
+    def __init__(self, position,radius, mass = 10, inertia=100, friction = 0.99, agent=None, renderer=None):
+        body = pm.Body(mass, inertia)
+        body.position = position
+        shape = pm.Circle(body, radius, Vec2d(0,0))
+        shape.friction = friction
+        SimpleEntity.__init__(self, shape, renderer)
+    def get_position(self):
+        return self.shapes[0].body.position
+    position = property(get_position)
+    
+    def update(self, world):
+        pass
         
 class Platform(SimpleEntity):
     def __init__(self, a,b, thickness=5.0, friction=0.99, renderer=None):

@@ -17,8 +17,10 @@ COLLTYPE_PLATFORM = 2
 
 camera = Camera(640, 480,offset=(-30,0))
 circle_renderer = renderers.CircleRenderer(camera)
+evilcat_renderer = renderers.EvilCatRenderer(300, 100, 64, 64, camera)
 platform_renderer = renderers.PlatformRenderer(camera)
 
+pyglet.options['audio'] = ('openal', 'silent') #this needs to be set before importing pyglet.media
 
 #POOOPS!
 class HelloWorldWindow(pyglet.window.Window):
@@ -57,12 +59,15 @@ class HelloWorldWindow(pyglet.window.Window):
         pyglet.clock.set_fps_limit(self.fps*2)
         self.fps_display = pyglet.clock.ClockDisplay()
         self.ball = entity.Ball((20,300), 10, 10, 100, .5, agent=self.keyboard_agent,renderer = circle_renderer)
+        #self.evilcat = entity.EvilCat((evilcat_renderer.cat_sprite.x, evilcat_renderer.cat_sprite.y), 64, 64, renderer=evilcat_renderer)
+        self.evilcat = entity.EvilCatCircle((evilcat_renderer.cat_sprite.x, evilcat_renderer.cat_sprite.y), 32, renderer=evilcat_renderer)
         self.space.addEntity(self.ball)
+        self.space.addEntity(self.evilcat)
         self.hud_manager = hud.HudManager()
         #music = pyglet.resource.media('music.mp3')
         #music.play
-        #sound = pyglet.resource.media('shot.wav', streaming=False)
-        #sound.play()
+        self.SEGA_sound = pyglet.resource.media('sega.wav', streaming=False)
+        self.SEGA_sound.play()
 
     def update(self,dt):
         if self.run:

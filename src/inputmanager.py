@@ -9,7 +9,7 @@ Created on Feb 24, 2010
 from pyglet.window import key
 
 class KeyboardManager:
-    def __init__(self, key_config={key.LEFT:"left", key.RIGHT:"right", key.UP:"up", key.DOWN:"down", key.A:"sprint"}):
+    def __init__(self, key_config={key.LEFT:"left", key.RIGHT:"right", key.UP:"up", key.DOWN:"down", key.A:"sprint", key.F:"jump"}):
         self.key_config = key_config
         self.data = {}
     

@@ -7,7 +7,7 @@ Created on Feb 21, 2010
 import primitives
 import pyglet
 import quadtree
-
+import math
 
 class Renderer:
     def __init__(self):
@@ -27,6 +27,31 @@ class CircleRenderer:
         self.primitive.y = y
         self.primitive.width = ball.radius * 2
         self.primitive.render()
+        
+class EvilCatRenderer:
+    def __init__(self, x, y, width, height, camera):
+        cat_texture = pyglet.image.load('../img/evilcat.gif')
+        self.width = width
+        self.height = height
+        cat_texture.anchor_x = self.width/2
+        cat_texture.anchor_y = self.height/2
+        self.cat_sprite = pyglet.sprite.Sprite(cat_texture, x, y)
+        self.camera = camera
+
+    def render(self, entity):
+        cx, cy = self.camera.offset
+        width = self.camera.width
+        height = self.camera.height
+        top = cy
+        right = cx+width
+        left = cx
+        bottom = cy-height
+        cat_rect = entity.shapes[0]
+        x,y = self.camera.translate(cat_rect.body.position[0],cat_rect.body.position[1])
+        self.cat_sprite.x = x
+        self.cat_sprite.y = y
+        self.cat_sprite.rotation = -math.degrees(cat_rect.body._get_angle())
+        self.cat_sprite.draw()
 
 class PlatformRenderer:
     def __init__(self, camera):
@@ -101,4 +126,4 @@ class HudAngryRenderer(Renderer):
     def render(self):
         self.sprite.draw()
         
-execfile('SideScroller.py')
+#execfile('SideScroller.py')
