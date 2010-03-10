@@ -14,7 +14,7 @@ class BallSoundRenderer(SoundRenderer):
     def __init__(self):
         SoundRenderer.__init__(self)
         self.soundpaths.append('sound/ball')
-        self.loader = pyglet.resource.Loader(path=self.soundpaths, script_home='..')
+        self.loader = pyglet.resource.Loader(path=self.soundpaths, script_home=PROJ_HOME_RELATIVE)
         #load up all sounds, probably faster than loading a la carte
         self.jump_sound = self.loader.media('sega.wav', streaming=False)
 
