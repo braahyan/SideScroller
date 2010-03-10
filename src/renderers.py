@@ -8,9 +8,12 @@ import primitives
 import pyglet
 import math
 
+PROJ_HOME_RELATIVE = '..'
+
 class Renderer:
     def __init__(self):
-        pass
+        self.imgpaths = ['img']
+
     def render(self):
         raise NotImplemented
         
@@ -27,11 +30,16 @@ class CircleRenderer:
         self.primitive.width = ball.radius * 2
         self.primitive.render()
         
-class EvilCatRenderer:
+class EvilCatRenderer(Renderer):
     def __init__(self, x, y, width, height, camera):
-        cat_texture = pyglet.image.load('../img/evilcat.gif')
+        Renderer.__init__(self)
+        self.loader = pyglet.resource.Loader(path=self.imgpaths, script_home=PROJ_HOME_RELATIVE)
+        cat_texture = self.loader.texture('evilcat.gif')
+        
+        #does we need these elsewhere?
         self.width = width
         self.height = height
+        
         cat_texture.anchor_x = self.width/2
         cat_texture.anchor_y = self.height/2
         self.cat_sprite = pyglet.sprite.Sprite(cat_texture, x, y)
@@ -99,22 +107,21 @@ class FpsRenderer(Renderer):
         
 class HudAngryRenderer(Renderer):
     def __init__(self, x, y):
-        self.image_list = [pyglet.image.load('../img/anim/frame1.png'),
-                           pyglet.image.load('../img/anim/frame2.png'),
-                           pyglet.image.load('../img/anim/frame3.png'),
-                           pyglet.image.load('../img/anim/frame4.png'),
-                           pyglet.image.load('../img/anim/frame5.png'),
-                           pyglet.image.load('../img/anim/frame6.png'),
-                           pyglet.image.load('../img/anim/frame7.png')]
+        Renderer.__init__(self)
+        self.imgpaths.append('img/anim')
+        self.loader = pyglet.resource.Loader(path=self.imgpaths, script_home=PROJ_HOME_RELATIVE)
+        self.image_list = [self.loader.image('frame1.png'),
+                           self.loader.image('frame2.png'),
+                           self.loader.image('frame3.png'),
+                           self.loader.image('frame4.png'),
+                           self.loader.image('frame5.png'),
+                           self.loader.image('frame6.png'),
+                           self.loader.image('frame7.png')]
         self.x = x
         self.y = y
         self.anim_speed=0.1
         
-        bin = pyglet.image.atlas.TextureBin()
-        images = [bin.add(image) for image in self.image_list]
-        animation = pyglet.image.Animation.from_image_sequence(images, self.anim_speed, True)
+        animation = pyglet.image.Animation.from_image_sequence(self.image_list, self.anim_speed, True)
         self.sprite = pyglet.sprite.Sprite(animation, x=self.x, y=self.y)
     def render(self):
         self.sprite.draw()
-        
-#execfile('SideScroller.py')
