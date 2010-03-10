@@ -21,20 +21,20 @@ class KeyboardAgent:
             total_x_impulse=0
             total_y_impulse=0
             
+            #aggregate all impulses
             if self.input_manager["right"]:
                 total_x_impulse += (1000*sprint_multiplier)
-                #x.body.apply_impulse((1000*sprint_multiplier,0))
-                moving = True
             if self.input_manager["left"]:
                 total_x_impulse += (-1000*sprint_multiplier)
-                #x.body.apply_impulse((-1000*sprint_multiplier,0))
-                moving = True
             if self.input_manager["jump"]:
                 total_y_impulse += (1000*sprint_multiplier)    
-                #x.body.apply_impulse(0,(1000*sprint_multiplier))
-                moving = True
             
+            #apply
             x.body.apply_impulse((total_x_impulse,total_y_impulse))
+            
+            #check if we actually moved
+            if total_x_impulse or total_y_impulse:
+                moving = True
                 
             if not moving:
                 if math.fabs(x.body.velocity.x) <5:
