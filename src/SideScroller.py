@@ -66,8 +66,8 @@ class HelloWorldWindow(pyglet.window.Window):
         self.hud_manager = hud.HudManager()
         #music = pyglet.resource.media('music.mp3')
         #music.play
-        self.SEGA_sound = pyglet.resource.media('sega.wav', streaming=False)
-        self.SEGA_sound.play()
+        #self.SEGA_sound = pyglet.resource.media('sega.wav', streaming=False)
+        #self.SEGA_sound.play()
 
     def update(self,dt):
         if self.run:
