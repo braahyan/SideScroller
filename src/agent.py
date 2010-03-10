@@ -18,15 +18,23 @@ class KeyboardAgent:
             
         for x in entity.shapes:
             moving = False
+            total_x_impulse=0
+            total_y_impulse=0
+            
             if self.input_manager["right"]:
-                x.body.apply_impulse((1000*sprint_multiplier,0))
+                total_x_impulse += (1000*sprint_multiplier)
+                #x.body.apply_impulse((1000*sprint_multiplier,0))
                 moving = True
             if self.input_manager["left"]:
-                x.body.apply_impulse((-1000*sprint_multiplier,0))
+                total_x_impulse += (-1000*sprint_multiplier)
+                #x.body.apply_impulse((-1000*sprint_multiplier,0))
                 moving = True
-            #if self.input_manager["jump"]:    
+            if self.input_manager["jump"]:
+                total_y_impulse += (1000*sprint_multiplier)    
                 #x.body.apply_impulse(0,(1000*sprint_multiplier))
-                #moving = True
+                moving = True
+            
+            x.body.apply_impulse((total_x_impulse,total_y_impulse))
                 
             if not moving:
                 if math.fabs(x.body.velocity.x) <5:
