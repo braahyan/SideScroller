@@ -6,7 +6,6 @@ Created on Feb 21, 2010
 
 import primitives
 import pyglet
-import quadtree
 import math
 
 class Renderer:
@@ -80,26 +79,19 @@ class TileRenderer:
             yp = (y-1) * tile_size
             sprite = pyglet.sprite.Sprite(self.textures[texture], xp, yp, batch=self.batch)
             sprite.tile_coord = tile
-            t = quadtree.Rect(xp, yp, xp + tile_size, yp - tile_size)
             self.sprites.append(sprite)
-            self.tiles.append(t)
-        self.quad_tree = quadtree.QuadTree(items=self.tiles)
 
     def render(self, entity):
-        cx, cy = self.camera.offset
-        width = self.camera.width
-        height = self.camera.height
-        top = cy
-        right = cx+width
-        left = cx
-        bottom = cy-height
-        #print self.quad_tree.hit(quadtree.Rect(left, top, right, bottom))
         for sprite in self.sprites:
             a,b,t = sprite.tile_coord
             x,y = self.camera.translate((a-1)*self.tile_size, (b-1)*self.tile_size,)
             sprite.x = x
             sprite.y = y
-        self.batch.draw()
+            if sprite.x+self.tile_size <0 or sprite.y+self.tile_size<0 or sprite.x > self.camera.width or sprite.y > self.camera.height:
+                sprite.visible = False
+                print "hiding"
+            else:
+                sprite.visible = True
         self.batch.draw()
         
 class FpsRenderer(Renderer):
