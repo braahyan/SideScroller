@@ -84,6 +84,20 @@ class EvilCatCircle(SimpleEntity):
     
     def update(self, world):
         pass
+    
+class EvilCatSquare(SimpleEntity):
+    def __init__(self, position,size, mass = 10, inertia=100, friction = 0.99, agent=None, renderer=None):
+        body = pm.Body(mass, inertia)
+        body.position = position
+        shape = pm.Poly(body, [(-size, -size), (-size, size), (size,size), (size, -size)], Vec2d(0,0), auto_order_vertices=True)
+        shape.friction = friction
+        SimpleEntity.__init__(self, shape, renderer)
+    def get_position(self):
+        return self.shapes[0].body.position
+    position = property(get_position)
+    
+    def update(self, world):
+        pass
         
 class Platform(SimpleEntity):
     def __init__(self, a,b, thickness=5.0, friction=0.99, renderer=None):

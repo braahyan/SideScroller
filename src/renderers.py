@@ -89,7 +89,6 @@ class TileRenderer:
             sprite.y = y
             if sprite.x+self.tile_size <0 or sprite.y+self.tile_size<0 or sprite.x > self.camera.width or sprite.y > self.camera.height:
                 sprite.visible = False
-                print "hiding"
             else:
                 sprite.visible = True
         self.batch.draw()

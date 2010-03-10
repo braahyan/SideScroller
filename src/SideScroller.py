@@ -60,7 +60,7 @@ class HelloWorldWindow(pyglet.window.Window):
         self.fps_display = pyglet.clock.ClockDisplay()
         self.ball = entity.Ball((20,300), 10, 10, 100, .5, agent=self.keyboard_agent,renderer = circle_renderer)
         #self.evilcat = entity.EvilCat((evilcat_renderer.cat_sprite.x, evilcat_renderer.cat_sprite.y), 64, 64, renderer=evilcat_renderer)
-        self.evilcat = entity.EvilCatCircle((evilcat_renderer.cat_sprite.x, evilcat_renderer.cat_sprite.y), 32, renderer=evilcat_renderer)
+        self.evilcat = entity.EvilCatSquare((evilcat_renderer.cat_sprite.x, evilcat_renderer.cat_sprite.y), 32, renderer=evilcat_renderer)
         self.space.addEntity(self.ball)
         self.space.addEntity(self.evilcat)
         self.hud_manager = hud.HudManager()
