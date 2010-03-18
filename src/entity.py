@@ -7,7 +7,10 @@ Created on Feb 21, 2010
 import pymunk as pm
 from pymunk import Vec2d
 
-COLLTYPE_PLATFORM = 2
+TILE_COLLTYPE = 0
+PLAYER_COLLTYPE = 1
+ENTITY_COLLTYPE = 2
+RESPAWN_COLLTYPE = 3
 
 class Entity:
     '''class for physics object represented by some renderer'''
@@ -41,6 +44,7 @@ class Ball(ControllableEntity):
         body.position = position
         shape = pm.Circle(body, radius, Vec2d(0,0))
         shape.friction = friction
+        shape.collision_type = PLAYER_COLLTYPE
         ControllableEntity.__init__(self, [shape],agent=agent,renderer=renderer)
     def get_position(self):
         return self.shapes[0].body.position
@@ -58,6 +62,7 @@ class EvilCat(SimpleEntity):
         shape = pm.Poly(body, initial_bounds)
         body.position = position
         shape.friction = friction
+        shape.collision_type = ENTITY_COLLTYPE
         SimpleEntity.__init__(self, shape, renderer)
     def get_position(self):
         return self.shapes[0].body.position
@@ -77,6 +82,7 @@ class EvilCatCircle(SimpleEntity):
         body.position = position
         shape = pm.Circle(body, radius, Vec2d(0,0))
         shape.friction = friction
+        shape.collision_type = ENTITY_COLLTYPE
         SimpleEntity.__init__(self, shape, renderer)
     def get_position(self):
         return self.shapes[0].body.position
@@ -104,7 +110,7 @@ class Platform(SimpleEntity):
         body = pm.Body(pm.inf, pm.inf)
         shape= pm.Segment(body, Vec2d(a[0],a[1]), Vec2d(b[0],b[1]), thickness/2.0)
         shape.friction = friction
-        shape.collision_type = COLLTYPE_PLATFORM
+        shape.collision_type = TILE_COLLTYPE
         SimpleEntity.__init__(self, shape, renderer)
                 
 class Terrain(Entity):
@@ -117,6 +123,7 @@ class Terrain(Entity):
             body = pm.Body(pm.inf, pm.inf)
             shape = pm.Poly(body, self.tileToVertices(tile))
             shape.friction = friction
+            shape.collision_type = TILE_COLLTYPE
             shapes.append(shape)
         Entity.__init__(self, shapes, [], renderer)
     
@@ -140,3 +147,19 @@ class Terrain(Entity):
                 (x+self.tile_size, y+self.tile_size),
                 (x, y+self.tile_size)                
                 ]
+
+
+class RespawnSquare(SimpleEntity):
+    def __init__(self, position,size, mass=pm.inf, inertia=pm.inf, friction = 0.99, agent=None, renderer=None):
+        body = pm.Body(mass, inertia)
+        body.position = position
+        shape = pm.Poly(body, [(-size, -size), (-size, size), (size,size), (size, -size)], Vec2d(0,0), auto_order_vertices=True)
+        shape.friction = friction
+        shape.collision_type = RESPAWN_COLLTYPE
+        SimpleEntity.__init__(self, shape, renderer)
+    def get_position(self):
+        return self.shapes[0].body.position
+    position = property(get_position)
+    
+    def update(self, world):
+        pass

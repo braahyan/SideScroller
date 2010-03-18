@@ -11,9 +11,11 @@ from camera import Camera
 import inputmanager
 import hud
 
-COLLTYPE_DEFAULT = 0
-COLLTYPE_MOUSE = 1
-COLLTYPE_PLATFORM = 2
+TILE_COLLTYPE = 0
+PLAYER_COLLTYPE = 1
+ENTITY_COLLTYPE = 2
+RESPAWN_COLLTYPE = 3
+MOUSE_COLLTYPE = 4
 
 camera = Camera(640, 480,offset=(-30,0))
 circle_renderer = renderers.CircleRenderer(camera)
@@ -42,9 +44,8 @@ class HelloWorldWindow(pyglet.window.Window):
         self.mouse_body = pm.Body(pm.inf, pm.inf)
         self.mouse_shape = pm.Circle(self.mouse_body, 3, Vec2d(0,0))
         self.mouse_shape.sensor = True
-        self.mouse_shape.collision_type = COLLTYPE_MOUSE
+        self.mouse_shape.collision_type = MOUSE_COLLTYPE
         self.space.add(self.mouse_shape)
-        self.space.add_collisionpair_func(COLLTYPE_MOUSE, COLLTYPE_DEFAULT, mouse_coll_func, ("hello", "world"))
         
         self.line_point1 = None
         self.line_point2 = None
@@ -53,19 +54,34 @@ class HelloWorldWindow(pyglet.window.Window):
         self.push_handlers(self.keyboard)
         self.input_manager = inputmanager.KeyboardManager()
         self.keyboard_agent = agent.KeyboardAgent(self.input_manager)
+        
         self.fps = 60
         pyglet.clock.schedule_interval(self.update, 1.0/self.fps)
         pyglet.clock.schedule_interval(self.update_keys, 1.0/self.fps)
         pyglet.clock.set_fps_limit(self.fps*2)
         self.fps_display = pyglet.clock.ClockDisplay()
+        
+
+        self.ball_spawn_point = (20, 300)
         self.ball = entity.Ball((20,300), 10, 10, 100, .5, agent=self.keyboard_agent,renderer = circle_renderer)
         #self.evilcat = entity.EvilCat((evilcat_renderer.cat_sprite.x, evilcat_renderer.cat_sprite.y), 64, 64, renderer=evilcat_renderer)
-        self.evilcat = entity.EvilCatSquare((evilcat_renderer.cat_sprite.x, evilcat_renderer.cat_sprite.y), 32, renderer=evilcat_renderer)
+        #self.evilcat = entity.EvilCatSquare((evilcat_renderer.cat_sprite.x, evilcat_renderer.cat_sprite.y), 32, renderer=evilcat_renderer)
+        self.evilcat = entity.RespawnSquare((evilcat_renderer.cat_sprite.x, evilcat_renderer.cat_sprite.y), 32, renderer=evilcat_renderer)
         self.space.addEntity(self.ball)
-        self.space.addEntity(self.evilcat)
+        #self.space.addEntity(self.evilcat)
+        self.space.addStaticEntity(self.evilcat)
         self.hud_manager = hud.HudManager()
         #music = pyglet.resource.media('music.mp3')
         #music.play
+        self.space.add_collision_handler(PLAYER_COLLTYPE, RESPAWN_COLLTYPE, self.respawnCallBack, None, None, None, player_entity=self.ball)
+    
+    def respawnCallBack(self, space, arb, player_entity=None):
+        player_body = player_entity.shapes[0].body
+        player_body.position = self.ball_spawn_point 
+        player_body._set_velocity(Vec2d(0,0))
+        player_body._set_angular_velocity(0)
+        player_body.reset_forces()
+        return False
 
     def update(self,dt):
         if self.run:
@@ -122,7 +138,7 @@ class HelloWorldWindow(pyglet.window.Window):
             
 def mouse_coll_func(s1, s2, cs, normal_coef, data):
     """Simple callback that increases the radius of circles touching the mouse"""
-    if s2.collision_type != COLLTYPE_MOUSE and type(s2) == pm.Circle:
+    if s2.collision_type != MOUSE_COLLTYPE and type(s2) == pm.Circle:
         s2.radius += 0.15
     return False
 
