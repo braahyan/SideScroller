@@ -80,9 +80,11 @@ class TileRenderer:
         self.camera = camera
         self.tile_size = tile_size
         self.batch = pyglet.graphics.Batch()
-        self.tiles = []
         for tile in tiles:
-            x,y,texture = tile
+            #x,y,texture = tile
+            x = tile['x']
+            y = tile['y']
+            texture = tile['texture']
             xp = (x-1) * tile_size
             yp = (y-1) * tile_size
             sprite = pyglet.sprite.Sprite(self.textures[texture], xp, yp, batch=self.batch)
@@ -91,10 +93,14 @@ class TileRenderer:
 
     def render(self, entity):
         for sprite in self.sprites:
-            a,b,t = sprite.tile_coord
-            x,y = self.camera.translate((a-1)*self.tile_size, (b-1)*self.tile_size,)
+            #a,b,t = sprite.tile_coord
+            a = sprite.tile_coord['x']
+            b = sprite.tile_coord['y']
+            t = sprite.tile_coord['texture']
+            x,y = self.camera.translate((a-1)*self.tile_size, (b-1)*self.tile_size)
             sprite.x = x
             sprite.y = y
+            
             if sprite.x+self.tile_size <0 or sprite.y+self.tile_size<0 or sprite.x > self.camera.width or sprite.y > self.camera.height:
                 sprite.visible = False
             else:

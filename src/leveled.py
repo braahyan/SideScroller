@@ -78,7 +78,7 @@ class Leveled:
         
     def drawTile(self, tile):
         '''Draws a tile given a dict like
-             {'x' : int, 'y' : int, 'texture' : smilie_tile}
+        {'x' : int, 'y' : int, 'texture' : smilie_tile, 'colltype' : int}
            Returns True if tile is overwriting another, False otherwise'''
         x = tile['x'] - (tile['x']%self.TILE_SIZE)
         y = tile['y'] - (tile['y']%self.TILE_SIZE)
@@ -100,7 +100,8 @@ class Leveled:
         #if no duplicates, append
         self.save_level_json['tiles'].append({'x' : tile['x'], 
                                               'y' : tile['y'],
-                                              'texture' : texture_name})
+                                              'texture' : texture_name,
+                                              'colltype' : 0})
         print 'did not replace tile'
         return False
     

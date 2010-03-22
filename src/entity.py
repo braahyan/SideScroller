@@ -7,7 +7,7 @@ Created on Feb 21, 2010
 import pymunk as pm
 from pymunk import Vec2d
 
-TILE_COLLTYPE = 0
+GROUND_COLLTYPE = 0
 PLAYER_COLLTYPE = 1
 ENTITY_COLLTYPE = 2
 RESPAWN_COLLTYPE = 3
@@ -110,7 +110,7 @@ class Platform(SimpleEntity):
         body = pm.Body(pm.inf, pm.inf)
         shape= pm.Segment(body, Vec2d(a[0],a[1]), Vec2d(b[0],b[1]), thickness/2.0)
         shape.friction = friction
-        shape.collision_type = TILE_COLLTYPE
+        shape.collision_type = GROUND_COLLTYPE
         SimpleEntity.__init__(self, shape, renderer)
                 
 class Terrain(Entity):
@@ -123,13 +123,14 @@ class Terrain(Entity):
             body = pm.Body(pm.inf, pm.inf)
             shape = pm.Poly(body, self.tileToVertices(tile))
             shape.friction = friction
-            shape.collision_type = TILE_COLLTYPE
+            tile_colltype = tile['colltype']
+            shape.collision_type = tile_colltype
             shapes.append(shape)
         Entity.__init__(self, shapes, [], renderer)
     
     def tileToQuad(self, indexTuple):
-        x = indexTuple[0] * self.tile_size
-        y = indexTuple[1] * self.tile_size
+        x = indexTuple['x'] * self.tile_size
+        y = indexTuple['y'] * self.tile_size
         x-=self.tile_size
         y-=self.tile_size
         return (x, y, 
@@ -138,8 +139,8 @@ class Terrain(Entity):
                 x, y+self.tile_size
                 )
     def tileToVertices(self, indexTuple):
-        x = indexTuple[0] * self.tile_size
-        y = indexTuple[1] * self.tile_size
+        x = indexTuple['x'] * self.tile_size
+        y = indexTuple['y'] * self.tile_size
         x-=self.tile_size
         y-=self.tile_size
         return [(x, y), 

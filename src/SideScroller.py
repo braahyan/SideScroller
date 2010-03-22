@@ -10,6 +10,7 @@ import agent
 from camera import Camera
 import inputmanager
 import hud
+import json
 
 TILE_COLLTYPE = 0
 PLAYER_COLLTYPE = 1
@@ -28,15 +29,16 @@ pyglet.options['audio'] = ('openal', 'silent') #this needs to be set before impo
 class HelloWorldWindow(pyglet.window.Window):
     def __init__(self):
         super(HelloWorldWindow, self).__init__()
-        
+
         pm.init_pymunk()
         self.space = world.World()
         self.tilebatch = pyglet.graphics.Batch()
         self.textures = {"dirt.gif":pyglet.image.load('../img/dirt.gif'),
-                         "smilie.gif":pyglet.image.load('../img/smilie.gif')}
+                         "smilie-small.gif":pyglet.image.load('../img/smilie-small.gif')}
         
         #load level
-        level_tiles = [(x,1,"dirt.gif") for x in range(1,30)]
+        #level_tiles = [{'x': x, 'y' : 1, 'texture': 'dirt.gif'} for x in range(1,30)]
+        level_tiles = self.load_level('blarf')
         tile_renderer = renderers.TileRenderer(self.textures, level_tiles, camera)
         level = entity.Terrain(level_tiles=level_tiles,renderer = tile_renderer)
         self.space.addStaticEntity(level)
@@ -62,8 +64,8 @@ class HelloWorldWindow(pyglet.window.Window):
         self.fps_display = pyglet.clock.ClockDisplay()
         
 
-        self.ball_spawn_point = (20, 300)
-        self.ball = entity.Ball((20,300), 10, 10, 100, .5, agent=self.keyboard_agent,renderer = circle_renderer)
+        self.ball_spawn_point = (50, 300)
+        self.ball = entity.Ball(self.ball_spawn_point, 10, 10, 100, .5, agent=self.keyboard_agent,renderer = circle_renderer)
         #self.evilcat = entity.EvilCat((evilcat_renderer.cat_sprite.x, evilcat_renderer.cat_sprite.y), 64, 64, renderer=evilcat_renderer)
         #self.evilcat = entity.EvilCatSquare((evilcat_renderer.cat_sprite.x, evilcat_renderer.cat_sprite.y), 32, renderer=evilcat_renderer)
         self.evilcat = entity.RespawnSquare((evilcat_renderer.cat_sprite.x, evilcat_renderer.cat_sprite.y), 32, renderer=evilcat_renderer)
@@ -135,6 +137,19 @@ class HelloWorldWindow(pyglet.window.Window):
                 platform = entity.Platform(self.line_point1, line_point2, 5, renderer=platform_renderer)
                 self.space.addStaticEntity(platform)
                 self.line_point1 = None
+
+    def load_level(self, filename):
+        level_file = pyglet.resource.file('level_1.lvl')
+        level_str = level_file.read()
+        level_json = json.loads(level_str)
+        tile_list = level_json['tiles']
+
+        #go go gadget hack in respawn points! 
+        tile_list.append({'x': 1, 'y' : 0, 'texture': 'smilie-small.gif', 'colltype' : RESPAWN_COLLTYPE})
+        tile_list.append({'x': 18, 'y' : 0, 'texture': 'smilie-small.gif', 'colltype' : RESPAWN_COLLTYPE})
+        tile_list.append({'x': 21, 'y' : 0, 'texture': 'smilie-small.gif', 'colltype' : RESPAWN_COLLTYPE})
+        return tile_list
+
             
 def mouse_coll_func(s1, s2, cs, normal_coef, data):
     """Simple callback that increases the radius of circles touching the mouse"""
