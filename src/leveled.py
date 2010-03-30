@@ -5,6 +5,12 @@ import random
 import math
 import json
 
+TILE_COLLTYPE = 0
+PLAYER_COLLTYPE = 1
+ENTITY_COLLTYPE = 2
+RESPAWN_COLLTYPE = 3
+MOUSE_COLLTYPE = 4
+
 class Leveled:
     def __init__(self):
     
@@ -17,11 +23,13 @@ class Leveled:
         #might want to abstract this out to an object eventually
         smilie_tile = {
                        'filename' : 'smilie-small.gif', 
-                       'texture_object' : Tkinter.PhotoImage(file = '%ssmilie-small.gif' % self.TEX_DIRECTORY)
+                       'texture_object' : Tkinter.PhotoImage(file = '%ssmilie-small.gif' % self.TEX_DIRECTORY),
+                       'colltype' : RESPAWN_COLLTYPE
                       }
         dirt_tile = {
                      'filename' : 'dirt.gif', 
-                     'texture_object' : Tkinter.PhotoImage(file = '%sdirt.gif' % self.TEX_DIRECTORY)
+                     'texture_object' : Tkinter.PhotoImage(file = '%sdirt.gif' % self.TEX_DIRECTORY),
+                     'colltype' : TILE_COLLTYPE
                     }
         self.tileTexList = [dirt_tile, smilie_tile]
         self.gridCanvasIds = []
@@ -84,6 +92,8 @@ class Leveled:
         y = tile['y'] - (tile['y']%self.TILE_SIZE)
         texture_name = tile['texture']['filename']
         texture = tile['texture']['texture_object']
+        colltype = tile['texture']['colltype']
+
         self.canvas.create_image(x, y, image = texture, anchor=Tkinter.NW)
      
         #check for duplicate tiles to replace in the json record
@@ -93,6 +103,7 @@ class Leveled:
             if json_tile['x'] == tile['x'] and json_tile['y'] == tile['y']:
                 print json_tile
                 json_tile['texture'] = tile['texture']['filename']
+                json_tile['colltype'] = tile['texture']['colltype']
                 #json_tile = tile doesn't work here... maybe a reference/value issue?
                 print 'replaced tile: ', `json_tile`
                 return True
@@ -101,7 +112,7 @@ class Leveled:
         self.save_level_json['tiles'].append({'x' : tile['x'], 
                                               'y' : tile['y'],
                                               'texture' : texture_name,
-                                              'colltype' : 0})
+                                              'colltype' : colltype})
         print 'did not replace tile'
         return False
     
